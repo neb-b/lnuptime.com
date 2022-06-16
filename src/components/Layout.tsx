@@ -1,7 +1,8 @@
 import React from "react"
 import { useRouter } from "next/router"
-import { Box, Text, Button, Link, Flex } from "@chakra-ui/react"
+import { Box, Text, Link } from "@chakra-ui/react"
 import { useUser } from "@supabase/supabase-auth-helpers/react"
+import GithubLogo from "./GithubLogo"
 import Logo from "./Logo"
 
 type Props = {
@@ -81,13 +82,21 @@ const Layout: React.FC<Props> = ({ children }) => {
       <Box
         sx={{ borderTop: "1px solid #404040", px: 6, py: 4, color: "gray.400" }}
       >
-        Created by{" "}
-        <Link color="#1d87ec" href="https://twitter.com/AsherHopp">
-          @AsherHopp
-        </Link>{" "}
-        and{" "}
-        <Link color="#1d87ec" href="https://twitter.com/neb_b">
-          @neb_b
+        <Link href="https://github.com/neb-b/lnuptime.com" isExternal>
+          <Text
+            as="span"
+            display="flex"
+            alignItems="center"
+            fontWeight="normal"
+            sx={{
+              ":hover": { cursor: "pointer", textDecoration: "underline" },
+            }}
+          >
+            <GithubLogo />
+            <Text fontWeight="normal" ml={2}>
+              View on Github
+            </Text>
+          </Text>
         </Link>
       </Box>
     </Box>
