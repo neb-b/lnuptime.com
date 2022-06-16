@@ -1,0 +1,14 @@
+name: Node check
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - shell: bash
+        env:
+          PING_AUTH: ${{ secrets.PING_AUTH }}
+        run: |
+          curl --header "x-ping-auth: $PING_AUTH" https://www.lnuptime.com/api/ping
