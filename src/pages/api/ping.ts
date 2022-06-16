@@ -12,15 +12,14 @@ const api = axios.create({
 })
 
 export default async function handler(req, res) {
-  // const pingAuth = req.headers["x-ping-auth"]
-  // if (
-  //   process.env.NODE_ENV === "production" &&
-  //   pingAuth !== process.env.PING_AUTH
-  // ) {
-  //   res.status(401).json({ error: "unauthorized" })
-  //   return
-  // }
-  //
+  const pingAuth = req.headers["x-ping-auth"]
+  if (
+    process.env.NODE_ENV === "production" &&
+    pingAuth !== process.env.PING_AUTH
+  ) {
+    res.status(401).json({ error: "unauthorized" })
+    return
+  }
 
   try {
     const { data: userNodes, error: userNodesError } = await supabase
