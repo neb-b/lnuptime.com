@@ -11,3 +11,5 @@ Email alerts when your lightning node goes down
   - This keeps track of users, and their history of online connection statuses
 - Mailgun for email sending
 - Next.js
+
+Created by [@neb_b](https://twitter.com/neb_b) & [@AsherHopp](https://twitter.com/AsherHopp)
