@@ -5,7 +5,7 @@ import log from "log"
 
 const api = axios.create({
   baseURL: process.env.VOLTAGE_API_URL,
-  timeout: 10000,
+  timeout: 15000,
   headers: {
     "Grpc-Metadata-Macaroon": process.env.ADMIN_MACAROON_HEX,
   },
