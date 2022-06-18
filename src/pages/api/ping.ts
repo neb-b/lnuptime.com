@@ -3,6 +3,10 @@ import { supabase } from "lib/supabase"
 import { sendSuccessEmail, sendFailureEmail } from "lib/mailgun"
 import log from "log"
 
+const NODE_ONLINE_STATUS = 1
+const NODE_OFFLINE_STATUS = 0
+const NODE_MAYBE_OFFLINE_STATUS = 2
+
 const api = axios.create({
   baseURL: process.env.VOLTAGE_API_URL,
   timeout: 15000,
@@ -49,7 +53,6 @@ export default async function handler(req, res) {
       return acc
     }, {})
 
-    console.log("peerMap", peerMap)
     let count = 0
     const updateCheck = () => {
       count++
@@ -75,13 +78,13 @@ export default async function handler(req, res) {
 
       if (previousStatusError) {
         log.info("previous status error: ", previousStatusError)
-        if (userConnectionStatus) {
+        if (userConnectionStatus === 1) {
           log.info(
             "previous status error, but user is online, saving connection status"
           )
           await supabase.from("connections").insert({
             user_id: node.id,
-            status: 1,
+            status: NODE_ONLINE_STATUS,
           })
           return
         }
@@ -101,14 +104,14 @@ export default async function handler(req, res) {
             log.info("connected to node for first time")
             await supabase.from("connections").insert({
               user_id: node.id,
-              status: 1,
+              status: NODE_ONLINE_STATUS,
             })
             return
           } catch (e) {
             log.error("failed to connect for first time: ", e.message)
             await supabase.from("connections").insert({
               user_id: node.id,
-              status: 0,
+              status: NODE_OFFLINE_STATUS,
             })
             return
           }
@@ -146,7 +149,7 @@ export default async function handler(req, res) {
             const { error: setReconnectionStatusError } = await supabase
               .from("connections")
               .insert({
-                status: 1,
+                status: NODE_ONLINE_STATUS,
                 user_id: node.id,
               })
             if (!setReconnectionStatusError) {
@@ -154,7 +157,7 @@ export default async function handler(req, res) {
               await sendSuccessEmail(node.email)
             }
           } else {
-            // user wasn't in listpeers but we were able to reconnect
+            // user wasn't in listpeers but we were able to reconnect automatically
             // user is online so nothing to do here
           }
 
@@ -163,36 +166,49 @@ export default async function handler(req, res) {
         } catch (e) {
           log.info("unable to reconnect")
           if (previousStatus === 0) {
-            log.info("node offline: ", node.pubkey)
+            log.info("node still offline: ", node.pubkey)
             // user is still offline, and has already been alerted
             updateCheck()
             return
           }
 
-          // unable to reconnect to user
-          // update connections status and send failure email alerting user
-          const { error: updateError } = await supabase
-            .from("connections")
-            .insert({
-              user_id: node.id,
-              status: 0,
-            })
+          if (previousStatus === NODE_MAYBE_OFFLINE_STATUS) {
+            log.info(
+              "node was offline for first time, and still offline - send email"
+            )
+            // unable to reconnect to user
+            // update connections status and send failure email alerting user
+            const { error: updateError } = await supabase
+              .from("connections")
+              .insert({
+                user_id: node.id,
+                status: NODE_OFFLINE_STATUS,
+              })
 
-          if (!updateError) {
-            log.info("failed to connect - sending email")
-            await sendFailureEmail(node.email)
+            if (!updateError) {
+              log.info("failed to connect - sending email")
+              await sendFailureEmail(node.email)
+            }
+
+            updateCheck()
+            return
           }
-        }
 
-        updateCheck()
-        return
+          // node is offline for the first time
+          // set status to inbetween status in case it comes back to avoid sending off/on emails right away
+          await supabase.from("connections").insert({
+            user_id: node.id,
+            status: NODE_MAYBE_OFFLINE_STATUS,
+          })
+          updateCheck()
+        }
       } else {
         log.info("node is online")
 
         if (previousStatus !== 1) {
           await supabase.from("connections").insert({
             user_id: node.id,
-            status: 1,
+            status: NODE_ONLINE_STATUS,
           })
           sendSuccessEmail(node.email)
         }
