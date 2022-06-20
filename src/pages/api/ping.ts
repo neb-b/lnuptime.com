@@ -205,12 +205,15 @@ export default async function handler(req, res) {
       } else {
         log.info("node is online")
 
-        if (previousStatus !== 1) {
+        if (previousStatus !== NODE_ONLINE_STATUS) {
           await supabase.from("connections").insert({
             user_id: node.id,
             status: NODE_ONLINE_STATUS,
           })
-          sendSuccessEmail(node.email)
+
+          if (previousStatus === NODE_OFFLINE_STATUS) {
+            sendSuccessEmail(node.email)
+          }
         }
         updateCheck()
       }
