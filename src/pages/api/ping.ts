@@ -85,6 +85,7 @@ export default async function handler(req, res) {
           await supabase.from("connections").insert({
             user_id: node.id,
             status: NODE_ONLINE_STATUS,
+            pubkey: node.pubkey,
           })
           return
         }
@@ -105,6 +106,7 @@ export default async function handler(req, res) {
             await supabase.from("connections").insert({
               user_id: node.id,
               status: NODE_ONLINE_STATUS,
+              pubkey: node.pubkey,
             })
             return
           } catch (e) {
@@ -112,6 +114,7 @@ export default async function handler(req, res) {
             await supabase.from("connections").insert({
               user_id: node.id,
               status: NODE_OFFLINE_STATUS,
+              pubkey: node.pubkey,
             })
             return
           }
@@ -151,6 +154,7 @@ export default async function handler(req, res) {
               .insert({
                 status: NODE_ONLINE_STATUS,
                 user_id: node.id,
+                pubkey: node.pubkey,
               })
             if (!setReconnectionStatusError) {
               log.info("success reconnecting")
@@ -183,6 +187,7 @@ export default async function handler(req, res) {
               .insert({
                 user_id: node.id,
                 status: NODE_OFFLINE_STATUS,
+                pubkey: node.pubkey,
               })
 
             if (!updateError) {
@@ -199,6 +204,7 @@ export default async function handler(req, res) {
           await supabase.from("connections").insert({
             user_id: node.id,
             status: NODE_MAYBE_OFFLINE_STATUS,
+            pubkey: node.pubkey,
           })
           updateCheck()
         }
@@ -209,6 +215,7 @@ export default async function handler(req, res) {
           await supabase.from("connections").insert({
             user_id: node.id,
             status: NODE_ONLINE_STATUS,
+            pubkey: node.pubkey,
           })
 
           if (previousStatus === NODE_OFFLINE_STATUS) {
