@@ -65,6 +65,7 @@ export default async function handler(req, res) {
 
     userNodes.forEach(async (node) => {
       const userConnectionStatus = peerMap[node.pubkey] ? 1 : 0
+
       // TODO
       // perform a single read/write to supabase to update all node's connection status at once
       const { data: previousStatusData, error: previousStatusError } =
@@ -101,6 +102,7 @@ export default async function handler(req, res) {
                 pubkey: node.pubkey,
                 host: node.connection_string.split("@")[1],
               },
+              perm: true,
             })
             log.info("connected to node for first time")
             await supabase.from("connections").insert({
@@ -145,6 +147,7 @@ export default async function handler(req, res) {
               pubkey: node.pubkey,
               host: node.connection_string.split("@")[1],
             },
+            perm: true,
           })
 
           // user previously disconnected, and is now connected
