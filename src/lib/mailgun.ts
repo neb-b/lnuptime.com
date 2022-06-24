@@ -9,10 +9,7 @@ const client = mailgun.client({
 })
 
 export const sendEmail = async ({ to, subject, text }) => {
-  if (
-    to !== "nebb_bb@protonmail.com" &&
-    process.env.NODE_ENV !== "production"
-  ) {
+  if (to !== process.env.EMAIL && process.env.NODE_ENV !== "production") {
     log.info("ignoring non-whitelisted email")
     return
   }
