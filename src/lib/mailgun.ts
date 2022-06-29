@@ -14,6 +14,9 @@ export const sendEmail = async ({ to, subject, text }) => {
     return
   }
 
+  // disable emails
+  return
+
   try {
     const domainsList = await client.domains.list()
     const domain = domainsList[0].name
