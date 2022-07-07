@@ -31,6 +31,10 @@ const Layout: React.FC<Props> = ({ children }) => {
 
   return (
     <Box sx={bgSx}>
+      <Box bg="yellow.200" color="yellow.900" p={3}>
+        LN Uptime is currently down. Working on getting it back up but it might
+        be a bit.
+      </Box>
       <Box
         sx={{
           borderBottom: isHomePage ? "none" : "1px solid #404040",
@@ -79,6 +83,7 @@ const Layout: React.FC<Props> = ({ children }) => {
       >
         {children}
       </Box>
+
       <Box
         sx={{ borderTop: "1px solid #404040", px: 6, py: 4, color: "gray.400" }}
       >
