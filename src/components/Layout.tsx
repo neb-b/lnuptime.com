@@ -32,8 +32,8 @@ const Layout: React.FC<Props> = ({ children }) => {
   return (
     <Box sx={bgSx}>
       <Box bg="yellow.200" color="yellow.900" p={3}>
-        LN Uptime is currently down. Working on getting it back up but it might
-        be a bit.
+        LN Uptime is no longer working with no plans to fix. You can explore the source code{" "}
+        <Link href="https://github.com/neb-b/lnuptime.com">here</Link>.
       </Box>
       <Box
         sx={{
@@ -58,12 +58,7 @@ const Layout: React.FC<Props> = ({ children }) => {
               </Link>
             )}
             {!isProfilePage && accessToken && (
-              <Link
-                colorScheme="yellow"
-                href="/profile"
-                fontSize={18}
-                sx={{ color: "yellow.400" }}
-              >
+              <Link colorScheme="yellow" href="/profile" fontSize={18} sx={{ color: "yellow.400" }}>
                 Your Profile
               </Link>
             )}
@@ -84,9 +79,7 @@ const Layout: React.FC<Props> = ({ children }) => {
         {children}
       </Box>
 
-      <Box
-        sx={{ borderTop: "1px solid #404040", px: 6, py: 4, color: "gray.400" }}
-      >
+      <Box sx={{ borderTop: "1px solid #404040", px: 6, py: 4, color: "gray.400" }}>
         <Link href="https://github.com/neb-b/lnuptime.com" isExternal>
           <Text
             as="span"
